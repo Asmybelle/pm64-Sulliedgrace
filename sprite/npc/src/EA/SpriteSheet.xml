@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<SpriteSheet maxComponents="1" paletteGroups="1">
+	<PaletteList>
+		<Palette id="0" name="Palette_00" src="Palette_00.png"/>
+	</PaletteList>
+	<RasterList>
+		<Raster id="0" name="Sectonia_idleb1" palette="0" src="Sectonia_idleb1.png"/>
+		<Raster id="1" name="Sectonia_idleb2" palette="0" src="Sectonia_idleb2.png"/>
+		<Raster id="2" name="Sectonia_idleb3" palette="0" src="Sectonia_idleb3.png"/>
+		<Raster id="3" name="Sectonia_idleb4" palette="0" src="Sectonia_idleb4.png"/>
+		<Raster id="4" name="Sectonia_swordb1" palette="0" src="Sectonia_swordb1.png"/>
+		<Raster id="5" name="Sectonia_swordb2" palette="0" src="Sectonia_swordb2.png"/>
+		<Raster id="6" name="Sectonia_swordb3" palette="0" src="Sectonia_swordb3.png"/>
+		<Raster id="7" name="Sectonia_swordb4" palette="0" src="Sectonia_swordb4.png"/>
+		<Raster id="8" name="Sectonia_swordb5" palette="0" src="Sectonia_swordb5.png"/>
+		<Raster id="9" name="Sectonia_swordb6" palette="0" src="Sectonia_swordb6.png"/>
+		<Raster id="A" name="Sectonia_swordb7" palette="0" src="Sectonia_swordb7.png"/>
+		<Raster id="B" name="Sectonia_swordb9" palette="0" src="Sectonia_swordb9.png"/>
+		<Raster id="C" name="Sectonia_swordswap1" palette="0" src="Sectonia_swordswap1.png"/>
+		<Raster id="D" name="Sectonia_swordswap2" palette="0" src="Sectonia_swordswap2.png"/>
+		<Raster id="E" name="Sectonia_swordswap3" palette="0" src="Sectonia_swordswap3.png"/>
+		<Raster id="F" name="Sectonia_swordswap4" palette="0" src="Sectonia_swordswap4.png"/>
+		<Raster id="10" name="Sectonia_swordswap5" palette="0" src="Sectonia_swordswap5.png"/>
+		<Raster id="11" name="Sectonia_swordswap6" palette="0" src="Sectonia_swordswap6.png"/>
+		<Raster id="12" name="Sectonia_swordswap7" palette="0" src="Sectonia_swordswap7.png"/>
+		<Raster id="13" name="Sectonia_swordswap8" palette="0" src="Sectonia_swordswap8.png"/>
+		<Raster id="14" name="Sectonia_swordswap9" palette="0" src="Sectonia_swordswap9.png"/>
+		<Raster id="15" name="Sectonia_teleport2" palette="0" src="Sectonia_teleport2.png"/>
+		<Raster id="16" name="Sectonia_teleport3" palette="0" src="Sectonia_teleport3.png"/>
+		<Raster id="17" name="Sectonia_teleport_sword1" palette="0" src="Sectonia_teleport_sword1.png"/>
+		<Raster id="18" name="Sectonia_teleport_sword2" palette="0" src="Sectonia_teleport_sword2.png"/>
+		<Raster id="19" name="Sectonia_teleport_sword3" palette="0" src="Sectonia_teleport_sword3.png"/>
+		<Raster id="1A" name="Sectonia_lightning1" palette="0" src="Sectonia_lightning1.png"/>
+		<Raster id="1B" name="Sectonia_lightning2" palette="0" src="Sectonia_lightning2.png"/>
+		<Raster id="1C" name="Sectonia_lightning3" palette="0" src="Sectonia_lightning3.png"/>
+		<Raster id="1D" name="Sectonia_lightning4" palette="0" src="Sectonia_lightning4.png"/>
+		<Raster id="1E" name="Sectonia_lightning5" palette="0" src="Sectonia_lightning5.png"/>
+		<Raster id="1F" name="Sectonia_lightning6" palette="0" src="Sectonia_lightning6.png"/>
+		<Raster id="20" name="Sectonia_magicball1" palette="0" src="Sectonia_magicball1.png"/>
+		<Raster id="21" name="Sectonia_magicball2" palette="0" src="Sectonia_magicball2.png"/>
+		<Raster id="22" name="Sectonia_magicball3" palette="0" src="Sectonia_magicball3.png"/>
+		<Raster id="23" name="Sectonia_magicball4" palette="0" src="Sectonia_magicball4.png"/>
+		<Raster id="24" name="Sectonia_magicball5" palette="0" src="Sectonia_magicball5.png"/>
+		<Raster id="25" name="Sectonia_magicball6" palette="0" src="Sectonia_magicball6.png"/>
+		<Raster id="26" name="Sectonia_magicball7" palette="0" src="Sectonia_magicball7.png"/>
+		<Raster id="27" name="Sectonia_magicball8" palette="0" src="Sectonia_magicball8.png"/>
+		<Raster id="28" name="Sectonia_magicball9" palette="0" src="Sectonia_magicball9.png"/>
+		<Raster id="29" name="Sectonia_magicball10" palette="0" src="Sectonia_magicball10.png"/>
+		<Raster id="2A" name="Sectonia_magicball11" palette="0" src="Sectonia_magicball11.png"/>
+		<Raster id="2B" name="Sectonia_magicball12" palette="0" src="Sectonia_magicball12.png"/>
+		<Raster id="2C" name="Sectonia_magicball13" palette="0" src="Sectonia_magicball13.png"/>
+		<Raster id="2D" name="Sectonia_hurt" palette="0" src="Sectonia_hurt.png"/>
+		<Raster id="2E" name="Sectonia_magicball_projectile" palette="0" src="Sectonia_magicball_projectile.png"/>
+	</RasterList>
+	<AnimationList>
+		<Animation name="Anim_00">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="1000"/>
+				<Command val="3000"/>
+				<Command val="0"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="10"/>
+				<Command val="1001"/>
+				<Command val="3000"/>
+				<Command val="0"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="10"/>
+				<Command val="1002"/>
+				<Command val="3000"/>
+				<Command val="0"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="10"/>
+				<Command val="1003"/>
+				<Command val="3000"/>
+				<Command val="0"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="10"/>
+				<Command val="2000"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_01">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="100C"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="100D"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="100E"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="100F"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1010"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1011"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1012"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1013"/>
+				<Command val="3000"/>
+				<Command val="FFF8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1014"/>
+				<Command val="3000"/>
+				<Command val="FFF8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="2"/>
+				<Command val="2030"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_02">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="1000"/>
+				<Command val="3000"/>
+				<Command val="0"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="2"/>
+				<Command val="2000"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_03">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="100B"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1004"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1005"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1006"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="200C"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_04">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="1007"/>
+				<Command val="3000"/>
+				<Command val="FFE8"/>
+				<Command val="10"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1008"/>
+				<Command val="3000"/>
+				<Command val="FFE8"/>
+				<Command val="10"/>
+				<Command val="0"/>
+				<Command val="6"/>
+				<Command val="1009"/>
+				<Command val="3000"/>
+				<Command val="FFE8"/>
+				<Command val="10"/>
+				<Command val="0"/>
+				<Command val="C"/>
+				<Command val="100A"/>
+				<Command val="3000"/>
+				<Command val="FFE0"/>
+				<Command val="10"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="2012"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_05">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="100B"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="90"/>
+				<Command val="0"/>
+				<Command val="40B4"/>
+				<Command val="0"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1004"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="90"/>
+				<Command val="0"/>
+				<Command val="40B4"/>
+				<Command val="0"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1005"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="90"/>
+				<Command val="0"/>
+				<Command val="40B4"/>
+				<Command val="0"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1006"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="90"/>
+				<Command val="0"/>
+				<Command val="40B4"/>
+				<Command val="0"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1005"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="90"/>
+				<Command val="0"/>
+				<Command val="40B4"/>
+				<Command val="0"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1006"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="90"/>
+				<Command val="0"/>
+				<Command val="40B4"/>
+				<Command val="0"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="100B"/>
+				<Command val="3000"/>
+				<Command val="10"/>
+				<Command val="90"/>
+				<Command val="0"/>
+				<Command val="40B4"/>
+				<Command val="0"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="2036"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_06">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="100C"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1015"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1016"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="200C"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_07">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="1016"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1015"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="100C"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="200C"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_08">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="1017"/>
+				<Command val="3000"/>
+				<Command val="0"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1018"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1019"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="200C"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_09">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="1019"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1018"/>
+				<Command val="3000"/>
+				<Command val="8"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1017"/>
+				<Command val="3000"/>
+				<Command val="0"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="200C"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_0A">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="101A"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="101B"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="101C"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="101D"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="101B"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="101C"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="101D"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="101E"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="101F"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="2030"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_0B">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="1020"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1021"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1022"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1023"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1024"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1025"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1026"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1027"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1028"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1029"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="102A"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="102B"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="102C"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="201E"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_0C">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="1025"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1026"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1027"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="1028"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="2000"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_0D">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="1029"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="102A"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="102B"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="102C"/>
+				<Command val="3000"/>
+				<Command val="FFFC"/>
+				<Command val="24"/>
+				<Command val="0"/>
+				<Command val="4"/>
+				<Command val="2000"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_0E">
+			<Component xyz="0,0,0">
+				<Command val="102E"/>
+				<Command val="2"/>
+				<Command val="2000"/>
+			</Component>
+		</Animation>
+		<Animation name="Anim_0F">
+			<Component name="Comp_00" xyz="0,0,0">
+				<Command val="102D"/>
+				<Command val="3000"/>
+				<Command val="0"/>
+				<Command val="20"/>
+				<Command val="0"/>
+				<Command val="2"/>
+				<Command val="2000"/>
+			</Component>
+		</Animation>
+	</AnimationList>
+</SpriteSheet>

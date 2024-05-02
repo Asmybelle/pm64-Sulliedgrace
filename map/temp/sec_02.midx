@@ -1,0 +1,17 @@
+$Start#Unknown#0#80240000#0
+$NpcGroup_Sectonia#NpcGroup#0#80240000#1F0
+$Function_TexturePan_Complex#Function#1F0#802401F0#1E8
+$Function_TexturePan_Simple#Function#3D8#802403D8#124
+$Script_SetupTexturePan#Script#4FC#802404FC#FC
+$Script_Main#Script_Main#5F8#802405F8#E8
+$Script_TexturePan_Update#Script#6E0#802406E0#9C
+$Script_SetupMusic#Script#77C#8024077C#50
+$EntryList#EntryList#7CC#802407CC#40
+$Header#Header#80C#8024080C#40
+$NpcSettings_Sectonia#NpcSettings#84C#8024084C#2C
+$Script_Init_Sectonia#Script#878#80240878#24
+$Script_Interact_Sectonia#Script#89C#8024089C#20
+$NpcGroupList_802439C4#NpcGroupList#8BC#802408BC#18
+$Script_EnterMap#Script#8D4#802408D4#10
+$Script_CreateExitTriggers#Script#8E4#802408E4#10
+$End#Unknown#8F4#802408F4#2770C

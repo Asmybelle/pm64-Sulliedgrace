@@ -1,0 +1,50 @@
+
+
+@ $Script_Main
+{
+	Set   *GB_WorldLocation  .Location:PeachsCastle
+	Call  MakeNpcs  ( .False $NpcGroupList_802439C4 )
+	Call  SetSpriteShading   ( .Shading:kkj_13 )
+	Call  SetCamPerspective  ( .Cam:Default 00000003 00000019 00000010 00001000 )
+	Call  SetCamBGColor      ( .Cam:Default 00000000 00000000 00000000 )
+	Call  SetCamEnabled      ( .Cam:Default .True
+	Call  SetCamLeadPlayer   ( .Cam:Default .False )
+	%I had to change the music track directly in the /gen patch file which seems to override the one here
+	Call  SetMusicTrack ( 00000000 .Song:BowserAttacks 00000001 00000008 )
+	Exec  $Script_SetupMusic
+	Exec  $Script_SetupTexturePan
+	Exec  $Script_EnterMap
+	Return
+	End
+}
+
+#new:NpcGroup $NpcGroup_Sectonia {
+    0000003F $NpcSettings_Sectonia ~Vec3f:Sectonia % -164 0 -37
+    00002D01 $Script_Init_Sectonia 00000000 00000000 0000010E
+    ~NoDrops
+    ~Movement:Sectonia
+    ~AnimationTable:Sectonia % .Sprite:Sectonia
+    00000000 00000000 00000000 001A0122 % no tattle string
+}
+
+#new:NpcSettings $NpcSettings_Sectonia {
+    00000000 00540050 00000000 00000000 00000000 80077F70 00000000 8007809C
+    00000000 00000000 00630000
+}
+
+#new:Script $Script_Init_Sectonia {
+    Call BindNpcInteract ( .Npc:Self $Script_Interact_Sectonia )
+    Return
+    End
+}
+
+#new:Script $Script_Interact_Sectonia {
+    Call StartBossBattle   ( .Song:Sulliedgraceorgan1 )
+    Return
+    End
+}
+
+#new:NpcGroupList $NpcGroupList_802439C4 {
+    00000001 $NpcGroup_Sectonia 0E110007
+    00000000 00000000 00000000
+}

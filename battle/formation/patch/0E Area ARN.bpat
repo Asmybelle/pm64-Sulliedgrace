@@ -1,0 +1,736 @@
+
+% Automatically dumped from section 0E
+
+#define .sectoniaStill  00EA0002
+#define .sectoniaIdle   00EA0000
+#define .sectoniaWalk   00EA0000
+#define .sectoniaSword  00EA0004
+#define .luigiRun       00EA0000
+#define .luigiRaise     00EA0002
+#define .luigiThrow     00EA0002
+#define .luigiHammer    00EA0002
+#define .sectoniaHurt   00EA000F
+#define .sectoniaDead   00EA000F
+#define .sectoniaBurnHurt  00EA000F
+#define .sectoniaBurnDead  00EA000F
+
+#define .sectoniaSwordswap   00EA0001
+#define .sectoniaSwordcharge   00EA0003
+#define .sectoniaSwordchargeflipped   00EA0005
+#define .sectoniaTeleport1   00EA0006
+#define .sectoniaTeleport2   00EA0007
+#define .sectoniaTeleportSword1   00EA0008
+#define .sectoniaTeleportSword2   00EA0009
+#define .sectoniaLightning   00EA000A
+#define .sectoniaMagicBall   00EA000B
+#define .sectoniaMagicBallA   00EA000C
+#define .sectoniaMagicBallB   00EA000D
+
+%Memory Luigi parts
+#define .luigiPart 1
+#define .hammerPart 2
+
+%Memory Luigi stats
+#define .SectoniaHP 70`b
+#define .hammerThrowDamage 4
+#define .sectoniaSwordDamage 8
+#define .sectoniaLightningDamage 6
+#define .sectoniaMagicBallDamage 2
+
+#new:Actor $Sectonia {
+    % stats
+    [Index]         D4b 
+    [Level]         70`b 
+    [MaxHP]         .SectoniaHP 
+    [Coins]         0`b 
+    [Flags]       00000200 %flying, isn't hit by quake hammer 
+    [StatusTable] $StatusTable_Sectonia
+    % ai
+    [PartsCount]    1`s 
+    [PartsTable]  $PartsTable_MemoryLuigi0
+    [Script]      $Script_Init_MemoryLuigi
+    % move effectiveness
+    [Escape]      0`b 
+    [Item]        0`b 
+    [AirLift]     0`b 
+    [Hurricane]   0`b % Bow's "Spook" as well
+    [UpAndAway]   0`b 
+    [PowerBounce] 75`b 
+    [SpinSmash]   100`b % weight (0-4)
+    % ui positions
+    [Size]         24`b  24`b % width height
+    [HealthBar]     0`b  24`b % dx dy
+    [StatusTurn]  -10`b  20`b % dx dy
+    [StatusIcon]   10`b  20`b % dx dy
+}
+
+#new:DefenseTable $DefenseTable_MemoryLuigi {
+.Element:Normal 00000000
+.Element:End
+}
+
+#new:StatusTable $StatusTable_Sectonia {
+.Status:Normal      0`
+.Status:Default     0`
+.Status:Sleep       0`
+.Status:Poison      0`
+.Status:Frozen      0`
+.Status:Dizzy       0`
+.Status:Fear        0`
+.Status:Static      0`
+.Status:Paralyze    0`
+.Status:Shrink      0`
+.Status:Stop        0`
+.Status:DefaultTurnMod    0`
+.Status:SleepTurnMod      0`
+.Status:PoisonTurnMod     0`
+.Status:FrozenTurnMod     0`
+.Status:DizzyTurnMod      0`
+.Status:FearTurnMod       0`
+.Status:StaticTurnMod     0`
+.Status:ParalyzeTurnMod   0`
+.Status:ShrinkTurnMod     0`
+.Status:StopTurnMod       0`
+.Status:End
+}
+
+#new:PartsTable $PartsTable_MemoryLuigi0 { %ActorPartBlueprint struct in decomp
+/% s32 flags %/                 00800000
+/% s8 index %/                  ~Byte:.luigiPart
+/% Vec3b posOffset %/           00b 00b 00b
+/% Vec2b targetOffset %/        00b 30b %for cursor when selecting to attack in battle
+/% s16 opacity %/               00FFs
+/% s32* IdleAnimations %/       $IdleAnimations_MemoryLuigi
+/% s32* defenseTable %/         $DefenseTable_MemoryLuigi
+/% s32 eventFlags %/            00000000
+/% s32 elementImmunityFlags %/  00000000
+/% s8 unk_1C %/                 00b
+/% s8 unk_1D %/                 F6b
+/% s8 unk_1E %/                 00b
+/% s8 unk_1F %/                 00b
+/% s8 unk_20 %/                 00000000
+}
+
+#new:IdleAnimations $IdleAnimations_Hammer {
+.Status:Normal    .luigiHammer
+.Status:End
+}
+
+#new:IdleAnimations $IdleAnimations_MemoryLuigi {
+.Status:Normal    .sectoniaIdle
+.Status:Stone     .sectoniaIdle
+.Status:Sleep     .sectoniaIdle
+.Status:Poison    .sectoniaIdle
+.Status:Stop      .sectoniaStill
+.Status:Static    .sectoniaIdle
+.Status:Paralyze  .sectoniaIdle
+.Status:Dizzy     .sectoniaIdle
+.Status:Fear      .sectoniaIdle
+.Status:End
+}
+
+#new:Script $Script_Init_MemoryLuigi {
+    Call BindTakeTurn      ( .Actor:Self $Script_TakeTurn_MemoryLuigi )
+    Call BindIdle  ( .Actor:Self $Script_Idle_MemoryLuigi )
+    Call BindHandleEvent   ( .Actor:Self $Script_HandleEvent_MemoryLuigi )
+    Return
+    End
+}
+
+#new:Script $Script_Idle_MemoryLuigi {
+    Return
+    End
+}
+
+#new:Script $Script_HandleEvent_MemoryLuigi {
+    Call UseIdleAnimation  ( .Actor:Self .False )
+    Call EnableIdleScript  ( .Actor:Self .False )
+    Call SetActorScale     ( .Actor:Self *Fixed[1.0] *Fixed[1.0] *Fixed[1.0] )
+    Call GetLastEvent      ( .Actor:Self *Var0 )
+    Switch  *Var0 
+        CaseOR  ==  .Event:HitCombo % 9
+        CaseOR  ==  .Event:Hit % A
+            SetConst  *Var0  .luigiPart 
+            SetConst  *Var1  .sectoniaHurt 
+            ExecWait  DoNormalHit
+        EndCaseGroup 
+        Case  ==  .Event:BurnHit % E
+            SetConst  *Var0  .luigiPart 
+            SetConst  *Var1  .sectoniaBurnHurt 
+            SetConst  *Var2  .sectoniaBurnDead 
+        ExecWait  DoBurnHit 
+        Case  ==  .Event:BurnDeath % 24
+            SetConst  *Var0  .luigiPart 
+            SetConst  *Var1  .sectoniaBurnHurt 
+            SetConst  *Var2  .sectoniaBurnDead 
+            ExecWait  DoBurnHit 
+            SetConst  *Var0  .luigiPart 
+            SetConst  *Var1  .sectoniaBurnDead 
+            ExecWait  DoDeath 
+            Return
+        Case  ==  .Event:Death % 20
+            SetConst  *Var0  .luigiPart 
+            SetConst  *Var1  .sectoniaHurt 
+            ExecWait  DoNormalHit 
+            Wait  10`
+            SetConst  *Var0  .luigiPart  
+            SetConst  *Var1  .sectoniaDead
+            ExecWait  DoDeath 
+            Return
+    EndSwitch
+    % 174:  	Case  ==  .Event:SpinSmashHit % B
+    % 180:  		SetConst  *Var0  00000001 
+    % 190:  		SetConst  *Var1  00260005 
+    % 1A0:  		ExecWait  DoSpinSmashHit 
+    % 1AC:  	Case  ==  .Event:SpinSmashDeath % 21
+    % 1B8:  		SetConst  *Var0  00000001 
+    % 1C8:  		SetConst  *Var1  00260005 
+    % 1D8:  		ExecWait  DoSpinSmashHit 
+    % 1E4:  		SetConst  *Var0  00000001 
+    % 1F4:  		SetConst  *Var1  00260006 
+    % 204:  		ExecWait  DoDeath 
+    % 210:  		Return
+    % 218:  	Case  ==  .Event:ShockHit % 2F
+    % 224:  		SetConst  *Var0  00000001 
+    % 234:  		SetConst  *Var1  0026000E 
+    % 244:  		ExecWait  DoShockHit 
+    % 250:  		SetConst  *Var0  00000001 
+    % 260:  		SetConst  *Var1  00260005 
+    % 270:  		ExecWait  DoJumpBack 
+    % 27C:  		Call JumpToGoal    ( .Actor:Self  5` .False .True .False )
+    % 29C:  		Call SetAnimationRate      ( .Actor:Self 00000001 *Fixed[2.0] )
+    % 2B4:  		Call SetAnimation  ( .Actor:Self 00000001 00260007 )
+    % 2CC:  		Call SetGoalToHome ( .Actor:Self )
+    % 2DC:  		Call SetActorSpeed ( .Actor:Self *Fixed[8.0] )
+    % 2F0:  		Call RunToGoal     ( .Actor:Self  0` .False )
+    % 308:  		Call SetAnimationRate      ( .Actor:Self 00000001 *Fixed[1.0] )
+    % 320:  		Wait  5`
+    % 32C:  		Call SetAnimation  ( .Actor:Self 00000001 00260001 )
+    % 344:  		Call SetActorJumpGravity   ( .Actor:Self *Fixed[1.6] )
+    % 358:  		Call JumpToGoal    ( .Actor:Self  5` .False .True .False )
+    % 378:  	Case  ==  .Event:ShockDeath % 26
+    % 384:  		SetConst  *Var0  00000001 
+    % 394:  		SetConst  *Var1  0026000E 
+    % 3A4:  		ExecWait  DoShockHit 
+    % 3B0:  		SetConst  *Var0  00000001 
+    % 3C0:  		SetConst  *Var1  00260006 
+    % 3D0:  		ExecWait  DoDeath 
+    % 3DC:  		Return
+    % 3E4:  	Case  ==  .Event:StarBeam % 13
+    % 3F0:  	CaseOR  ==  00000017 % 17
+    % 3FC:  	CaseOR  ==  .Event:Immune % 19
+    % 408:  	CaseOR  ==  .Event:AirLiftFailed % 1F
+    % 414:  		SetConst  *Var0  00000001 
+    % 424:  		SetConst  *Var1  00260001 
+    % 434:  		ExecWait  DoImmune 
+    % 440:  	EndCaseGroup
+    % 448:  	Case  ==  .Event:Death % 20
+    % 454:  		SetConst  *Var0  00000001 
+    % 464:  		SetConst  *Var1  .sectoniaHurt 
+    % 474:  		ExecWait  DoNormalHit 
+    % 480:  		Wait  10`
+    % 48C:  		SetConst  *Var0  00000001 
+    % 49C:  		SetConst  *Var1  .luigiDeath
+    % 4AC:  		ExecWait  DoDeath 
+    % 4B8:  		Return
+    % 4C0:  	Case  ==  .Event:EndFirstStrike % 35
+    % 4CC:  		Call SetAnimationRate  ( .Actor:Self 00000001 *Fixed[2.0] )
+    % 4E4:  		Call SetAnimation  ( .Actor:Self 00000001 00260003 )
+    % 4FC:  		Call SetGoalToHome ( .Actor:Self )
+    % 50C:  		Call SetActorSpeed ( .Actor:Self *Fixed[4.0] )
+    % 520:  		Call RunToGoal     ( .Actor:Self  0` .False )
+    % 538:  		Call SetAnimationRate  ( .Actor:Self 00000001 *Fixed[1.0] )
+    % 550:  		Call HPBarToHome   ( .Actor:Self )
+    % 560:  	Case  ==  .Event:RecoverStatus % 31
+    % 56C:  		SetConst  *Var0  00000001 
+    % 57C:  		SetConst  *Var1  00260001 
+    % 58C:  		ExecWait  DoRecover 
+    % 598:  	Case  ==  .Event:ScareAway % 39
+    % 5A4:  		SetConst  *Var0  00000001 
+    % 5B4:  		SetConst  *Var1  00260003 
+    % 5C4:  		SetConst  *Var2  00260005 
+    % 5D4:  		ExecWait  DoScareAway 
+    % 5E0:  		Return
+    % 5E8:  	Case  ==  .Event:BeginAirLift % 3A
+    % 5F4:  		SetConst  *Var0  00000001 
+    % 604:  		SetConst  *Var1  00260003 
+    % 614:  		ExecWait  DoAirLift 
+    % 620:  	Case  ==  .Event:BlowAway % 16
+    % 62C:  		SetConst  *Var0  00000001 
+    % 63C:  		SetConst  *Var1  00260005 
+    % 64C:  		ExecWait  DoBlowAway 
+    % 658:  		Return
+    % 660:  	Default
+    % 668:  EndSwitch
+    Call SetAnimation      ( .Actor:Self .luigiPart .sectoniaIdle )
+    Call EnableIdleScript  ( .Actor:Self .True )
+    Call UseIdleAnimation  ( .Actor:Self .True )
+    Return
+    End
+}
+
+#new:FloatTable $FloatTable_MemoryLuigi {
+0.0      0.017452 0.034899 0.052336 0.069756 0.087156 0.104528 0.121869
+0.139173 0.156434 0.173648 0.190809 0.207912 0.224951 0.241922 0.258819
+0.275637 0.292372 0.309017 0.325568 0.34202  0.358368 0.374607 0.390731
+0.406737 0.422618 0.438371 0.45399  0.469472 0.48481  0.5      0.515038
+0.529919 0.544639 0.559193 0.573576 0.587785 0.601815 0.615661 0.62932
+0.642788 0.656059 0.669131 0.681998 0.694658 0.707107 0.71934  0.731354
+0.743145 0.75471  0.766044 0.777146 0.788011 0.798636 0.809017 0.819152
+0.829038 0.838671 0.848048 0.857167 0.866025 0.87462  0.882948 0.891007
+0.898794 0.906308 0.913545 0.920505 0.927184 0.93358  0.939693 0.945519
+0.951057 0.956305 0.961262 0.965926 0.970296 0.97437  0.978148 0.981627
+0.984808 0.987688 0.990268 0.992546 0.994522 0.996195 0.997564 0.99863
+0.999391 0.999848 1.0
+}
+
+#new:Script $LuigiHammerThrow {
+    Call SetTargetActor    ( .Actor:Self .Actor:Player )
+    Call SetAnimation ( .Actor:Self .luigiPart .luigiRaise )
+    Wait 28`
+    Call SetAnimation ( .Actor:Self .luigiPart .luigiThrow )
+    Wait 15`
+    Call GetActorPos ( .Actor:Self *Var0 *Var1 *Var2 )
+    Add *Var1 10`
+    Call SetPartPos        ( .Actor:Self .hammerPart  *Var0  *Var1  *Var2 )
+    Call SetPartScale  ( .Actor:Self .hammerPart *Fixed[1.0] *Fixed[1.0] *Fixed[1.0] )
+    Call SetPartJumpGravity    ( .Actor:Self .hammerPart *Fixed[3.0] )
+    Call SetPartFlagBits   ( .Actor:Self .hammerPart 00000001 .False )
+    Call SetGoalToTarget   ( .Actor:Self )
+    Call GetGoalPos        ( .Actor:Self *Var0 *Var1 *Var2 )
+
+    Call EnemyTestTarget   ( .Actor:Self *Var3 ~Flags:DamageType:0 00000000 00000001 00000010 )
+    Switch  *Var3 
+        CaseOR  ==  .HitResult:Miss % 6
+        CaseOR  ==  .HitResult:Lucky % 5
+            Add *Var1 -32` %target mario's feet
+            Call JumpPartTo        ( .Actor:Self .hammerPart *Var0 *Var1 *Var2  15` .True )
+            Call SetPartFlagBits   ( .Actor:Self .hammerPart 00000001 .True )
+            Wait  2`
+        EndCaseGroup
+
+        Default
+            Call JumpPartTo        ( .Actor:Self .hammerPart *Var0 *Var1 *Var2  15` .True )
+            Call SetPartFlagBits   ( .Actor:Self .hammerPart 00000001 .True )
+            Wait  2`
+            Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .hammerThrowDamage 00000020 )
+    EndSwitch
+
+    Return
+    End
+}
+
+#new:Script $SectoniaMagicBall1 {
+
+    %sectonia charges her staff and shoots 3 projectiles in quick succession
+	Call SetTargetActor    ( .Actor:Self .Actor:Player )
+	Call SetGoalToTarget ( .Actor:Self )
+	Call  GetActorPos       ( .Actor:Self *Var0 *Var1 *Var2 )
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaMagicBall)
+	Wait 24`
+	%shoot first ball
+	Call  GetGoalPos        ( .Actor:Self *Var3 *Var4 *Var5 )
+	Wait  16`
+	%shoot second ball
+	Wait  16`
+	%shoot third ball
+   
+	Call EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 00000001 00000010 )
+    Switch  *Var0 
+        CaseOR  ==  .HitResult:Miss % 6
+        CaseOR  ==  .HitResult:Lucky % 5
+			Call  PlaySound ( 00002069 )
+			Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 *Var3 *Var4 *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 )
+			Wait  4`
+			Call  SetGoalToTarget   ( .Actor:Self )
+			Return
+        EndCaseGroup
+
+        Default
+			Call  PlaySound ( 00002069 )
+			Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 *Var3 *Var4 *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 )
+			Wait  4`
+			%Call  GetStatusFlags    ( .Actor:Self *Var0 )
+			Call  SetGoalToTarget   ( .Actor:Self )
+            Call  EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 000101FE .sectoniaLightningDamage 00000020 ) %second argument is HitResult that says if the attack misses or so
+    EndSwitch
+    Return
+    End
+}
+
+#new:Script $LuigiRunAttackFall {
+    %luigi runs
+    Call SetAnimation( .Actor:Self .luigiPart .luigiRun)
+    Call SetGoalToTarget ( .Actor:Self )
+    Call AddGoalPos ( .Actor:Self 50` 0` 0` ) %60 X units in front of mario
+    Call SetActorSpeed ( .Actor:Self *Fixed[7.0] )
+    Call RunToGoal ( .Actor:Self 0` .True )
+
+    %luigi trips
+    Call SetAnimation( .Actor:Self .luigiPart .sectoniaIdle)
+    Set *Var0 0
+    Call GetActorRotation ( .Actor:Self *Var4 *Var5 *Var6 )
+    Call GetActorPos ( .Actor:Self *Var7 *Var8 *Var9 ) %store luigi's original Y
+    Loop 11`
+        Call SetActorRotation ( .Actor:Self 0` 0` *Var0 )
+        Call GetActorPos ( .Actor:Self *Var1 *Var2 *Var3 )
+        Add *Var2 1`
+        Call SetActorPos ( .Actor:Self *Var1 *Var2 *Var3 )
+        Add *Var0 9`
+        Wait 1`
+    EndLoop
+
+    %luigi goes to stand up
+    Wait 30`
+    Call SetActorRotation ( .Actor:Self *Var4 *Var5 *Var6 )
+    Call GetActorPos ( .Actor:Self *Var1 *Var2 *Var3 )
+    Call SetGoalPos ( .Actor:Self *Var1 *Var8 *Var3 )
+
+    %luigi jumps in place
+    Call SetAnimation  ( .Actor:Self .luigiPart .sectoniaIdle )
+    Call SetActorJumpGravity   ( .Actor:Self *Fixed[1.0] )
+    Call JumpToGoal    ( .Actor:Self  15` .False .True .False )
+
+    %luigi returns to home
+    Wait 15`
+    Call SetAnimation ( .Actor:Self .luigiPart .sectoniaWalk )
+    Call SetGoalToHome ( .Actor:Self )
+    Call SetActorSpeed ( .Actor:Self *Fixed[4.0] )
+    Call RunToGoal ( .Actor:Self 0` .True )
+
+    Return
+    End
+}
+
+#new:Script $LuigiRunAttackSuccess {
+
+    %Call SetGoalToTarget ( .Actor:Self )
+    %Call SetActorSpeed ( .Actor:Self *Fixed[7.0] )
+    %Call RunToGoal ( .Actor:Self 0` .True )
+
+    %run off screen
+    Call AddGoalPos ( .Actor:Self -180` 0` 0` )
+    Call SetActorSpeed ( .Actor:Self *Fixed[7.0] )
+    Call RunToGoal ( .Actor:Self 0` .True )
+
+
+    %wrap around from left of screen to right and then walk back to home position
+    Wait 30`
+    Call SetAnimation ( .Actor:Self .luigiPart .sectoniaWalk )
+    Call SetActorPos ( .Actor:Self 200` 0` 0` )
+    Call SetGoalToHome ( .Actor:Self )
+    Call SetActorSpeed ( .Actor:Self *Fixed[4.0] )
+    Call RunToGoal ( .Actor:Self 0` .True )
+    Return
+    End
+}
+
+#new:Script $SectoniaSwordAttack1 {
+    Call SetTargetActor    ( .Actor:Self .Actor:Player )
+	Call SetGoalToTarget ( .Actor:Self )
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaSwordswap)
+	Wait 32`
+	
+	%sectonia teleports and strikes player
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaTeleportSword1)
+	Wait 8`
+    Call PlaySoundAtActor (.Actor:Self .Sound:BooVanish)
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000000 )
+    Wait 12`
+	Call SetActorPos ( .Actor:Self -30` -15` 0` )
+    Call SetAnimation ( .Actor:Self .luigiPart .sectoniaSwordcharge)
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Wait 4`
+	Call  SetPartAlpha  ( .Actor:Self 00000001 000000FF )
+    Wait 12`
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaSword)
+	Call EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 00000001 00000010 )
+    Switch  *Var0 
+        CaseOR  ==  .HitResult:Miss % 6
+        CaseOR  ==  .HitResult:Lucky % 5
+			Set   *VarA  *Var0
+			If  *VarA  ==  .HitResult:Lucky % 5
+				Call  EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:TriggerLucky 00000000 00000000 00000000 )
+			EndIf
+		    Wait 16`	
+			Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+			Wait 4`
+			Call  SetPartAlpha  ( .Actor:Self 00000001 00000000 )
+			Call SetActorPos ( .Actor:Self 50` 0` 0` )
+			Call SetAnimation ( .Actor:Self .luigiPart .sectoniaTeleport2)
+			Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+			Wait 8`
+			Call  SetPartAlpha  ( .Actor:Self 00000001 000000FF )
+			Call PlaySoundAtActor (.Actor:Self .Sound:BooAppear)
+			Return
+        EndCaseGroup
+
+        Default
+			Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .sectoniaSwordDamage 00000030 )
+    EndSwitch
+	
+    %sectonia teleports back
+    Wait 16`	
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Wait 4`
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000000 )
+	Call SetActorPos ( .Actor:Self 50` 0` 0` )
+    Call SetAnimation ( .Actor:Self .luigiPart .sectoniaTeleport2)
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Wait 8`
+	Call  SetPartAlpha  ( .Actor:Self 00000001 000000FF )
+	Call PlaySoundAtActor (.Actor:Self .Sound:BooAppear)
+
+    Return
+    End
+}
+
+#new:Script $SectoniaSwordAttack2 {
+    Call SetTargetActor    ( .Actor:Self .Actor:Player )
+	Call SetGoalToTarget ( .Actor:Self )
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaSwordswap)
+	Wait 32`
+	
+	%sectonia teleports and does a fakeout, then strikes
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaTeleportSword1)
+	Wait 8`
+    Call PlaySoundAtActor (.Actor:Self .Sound:BooVanish)
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000000 )
+    Wait 12`
+	Call SetActorPos ( .Actor:Self -30` -15` 0` )
+    Call SetAnimation ( .Actor:Self .luigiPart .sectoniaSwordchargeflipped)
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Wait 4`
+	Call  SetPartAlpha  ( .Actor:Self 00000001 000000FF )
+    Wait 18`
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Wait 4`
+	Call PlaySoundAtActor (.Actor:Self .Sound:BooVanish)
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000000 )
+	Wait 4`
+    Call SetAnimation ( .Actor:Self .luigiPart .sectoniaSwordcharge)
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Wait 4`
+	Call  SetPartAlpha  ( .Actor:Self 00000001 000000FF )
+    Wait 4`
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaSword)
+	Call EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 00000001 00000010 )
+    Switch  *Var0 
+        CaseOR  ==  .HitResult:Miss % 6
+        CaseOR  ==  .HitResult:Lucky % 5
+			Set   *VarA  *Var0
+			If  *VarA  ==  .HitResult:Lucky % 5
+				Call  EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:TriggerLucky 00000000 00000000 00000000 )
+			EndIf
+		    Wait 16`	
+			Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+			Wait 4`
+			Call  SetPartAlpha  ( .Actor:Self 00000001 00000000 )
+			Call SetActorPos ( .Actor:Self 50` 0` 0` )
+			Call SetAnimation ( .Actor:Self .luigiPart .sectoniaTeleport2)
+			Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+			Wait 8`
+			Call  SetPartAlpha  ( .Actor:Self 00000001 000000FF )
+			Call PlaySoundAtActor (.Actor:Self .Sound:BooAppear)
+			Return
+        EndCaseGroup
+
+        Default
+			Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .sectoniaSwordDamage 00000030 )
+    EndSwitch
+	
+    %sectonia teleports back
+    Wait 16`	
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Wait 4`
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000000 )
+	Call SetActorPos ( .Actor:Self 50` 0` 0` )
+    Call SetAnimation ( .Actor:Self .luigiPart .sectoniaTeleport2)
+	Call  SetPartAlpha  ( .Actor:Self 00000001 00000090 )
+	Wait 8`
+	Call  SetPartAlpha  ( .Actor:Self 00000001 000000FF )
+	Call PlaySoundAtActor (.Actor:Self .Sound:BooAppear)
+
+    Return
+    End
+}
+
+#new:Script $SectoniaLightningAttack1 {
+
+    %sectonia charges her staff and summons lightning 3 times, with the target advancing progressively towards mario and the third lightning on him.
+	Call SetTargetActor    ( .Actor:Self .Actor:Player )
+	Call SetGoalToTarget ( .Actor:Self )
+	Call  GetActorPos       ( .Actor:Self *Var0 *Var1 *Var2 )
+	%Call AddGoalPos ( .Actor:Self 50` 0` 0` ) %60 X units in front of mario
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaLightning)
+	Wait 16`
+	Call  GetGoalPos        ( .Actor:Self *Var3 *Var4 *Var5 )
+	Call  PlaySound ( 00002069 )
+	Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 -16` -16` *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 ) % (fx startX startY startZ goalX goalY goalZ ? ? ? ? ? ?)
+	Wait  16`
+	Call  PlaySound ( 00002069 )
+	Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 -48` -16` *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 )
+	Wait  16`
+   
+	Call EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 00000001 00000010 )
+    Switch  *Var0 
+        CaseOR  ==  .HitResult:Miss % 6
+        CaseOR  ==  .HitResult:Lucky % 5
+			Set   *VarA  *Var0
+			If  *VarA  ==  .HitResult:Lucky % 5
+				Call  EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:TriggerLucky 00000000 00000000 00000000 )
+			EndIf
+			Call  PlaySound ( 00002069 )
+			Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 *Var3 *Var4 *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 )
+			Wait  6`
+			Call  SetGoalToTarget   ( .Actor:Self )
+			Return
+        EndCaseGroup
+
+        Default
+			Call  PlaySound ( 00002069 )
+			Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 *Var3 *Var4 *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 )
+			Wait  6`
+			%Call  GetStatusFlags    ( .Actor:Self *Var0 )
+			Call  SetGoalToTarget   ( .Actor:Self )
+            Call  EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 000101FE .sectoniaLightningDamage 00000020 ) %second argument is HitResult that says if the attack misses or so
+    EndSwitch
+    Return
+    End
+}
+
+#new:Script $SectoniaLightningAttack2 {
+
+    %same as lightning1 but the middle telegraphy bolt is skipped, when she's on lower health
+	Call SetTargetActor    ( .Actor:Self .Actor:Player )
+	Call SetGoalToTarget ( .Actor:Self )
+	Call  GetActorPos       ( .Actor:Self *Var0 *Var1 *Var2 )
+	%Call AddGoalPos ( .Actor:Self 50` 0` 0` ) %60 X units in front of mario
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaLightning)
+	Wait 16`
+	Call  GetGoalPos        ( .Actor:Self *Var3 *Var4 *Var5 )
+	Call  PlaySound ( 00002069 )
+	Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 -16` -16` *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 ) % (fx startX startY startZ goalX goalY goalZ ? ? ? ? ? ?)
+	Wait  32`
+   
+	Call EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 00000001 00000010 )
+    Switch  *Var0 
+        CaseOR  ==  .HitResult:Miss % 6
+        CaseOR  ==  .HitResult:Lucky % 5
+			Set   *VarA  *Var0
+			If  *VarA  ==  .HitResult:Lucky % 5
+				Call  EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:TriggerLucky 00000000 00000000 00000000 )
+			EndIf
+			Call  PlaySound ( 00002069 )
+			Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 *Var3 *Var4 *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 )
+			Wait  6`
+			Call  SetGoalToTarget   ( .Actor:Self )
+			Return
+        EndCaseGroup
+
+        Default
+			Call  PlaySound ( 00002069 )
+			Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 *Var3 *Var4 *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 )
+			Wait  6`
+			%Call  GetStatusFlags    ( .Actor:Self *Var0 )
+			Call  SetGoalToTarget   ( .Actor:Self )
+            Call  EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 000101FE .sectoniaLightningDamage 00000020 ) %second argument is HitResult that says if the attack misses or so
+    EndSwitch
+    Return
+    End
+}
+
+
+#new:Script $Script_TakeTurn_MemoryLuigi {
+    Call UseIdleAnimation  ( .Actor:Self .False )
+    Call EnableIdleScript  ( .Actor:Self .False )
+    Call RandInt ( 50` *Var0 )
+	Call RandInt ( 50` *Var3 )
+	Call  GetActorHP    ( .Actor:Self *Var1 )
+    If *Var0 < 26`
+		If *Var1 < 40`
+			If *Var3 < 26`
+				ExecWait $SectoniaSwordAttack1
+			Else
+				ExecWait $SectoniaSwordAttack2
+			EndIf
+		Else
+			ExecWait $SectoniaSwordAttack1
+		EndIf    
+    Else
+		If *Var1 > 30`
+			ExecWait $SectoniaLightningAttack1
+		Else
+			ExecWait $SectoniaLightningAttack2
+		EndIf        
+    EndIf
+    
+    Call EnableIdleScript  ( .Actor:Self .True )
+    Call UseIdleAnimation  ( .Actor:Self .True )
+    Return
+    End
+}
+
+
+
+#new:ASCII $CustomStageTex {"sec_tex"}
+#new:ASCII $CustomStageShape {"sec_bt01_shape"}
+#new:ASCII $CustomStageHit {"sec_bt01_hit"}
+#new:ASCII $CustomStageBackground {"sam_bg"}
+#new:ASCII $CustomStageMapName {"sec_bt01"}
+
+#new:Formation $Formation_11
+{
+	$Sectonia 00000001 0000000A 00000000 00000000 00000000 00000000 %first argument is the position in the battle layout, change the end to 05/06 for a flying enemy
+}
+
+#new:Stage $Stage_Sectonia
+{
+    $CustomStageTex  % sec_tex
+    $CustomStageShape  % sec_bt01_shape
+    $CustomStageHit  % sec_bt01_hit
+    0
+    0
+    $CustomStageBackground  % sam_bg
+    0
+    0
+    0
+    0
+}
+
+@ $FormationTable
+{
+	$SJIS_80228580 00000001 $Formation_00 $Stage_8022792C 00000000
+	$SJIS_8022856C 00000002 $Formation_01 $Stage_8022792C 00000000
+	$SJIS_80228558 00000003 $Formation_02 $Stage_8022792C 00000000
+	$SJIS_80228530 00000003 $Formation_03 $Stage_8022792C 00000000
+	$SJIS_80228508 00000004 $Formation_04 $Stage_8022792C 00000000
+	$SJIS_802284CC 00000004 $Formation_05 $Stage_8022792C 00000000
+	$SJIS_802284B4 00000001 $Formation_06 $Stage_8022792C 00000000
+	$SJIS_8022849C 00000002 $Formation_07 $Stage_8022792C 00000000
+	$SJIS_80228484 00000003 $Formation_08 $Stage_8022792C 00000000
+	$SJIS_8022846C 00000004 $Formation_09 $Stage_8022792C 00000000
+	$SJIS_80228458 00000001 $Formation_0A $Stage_8022792C 00000000
+	$SJIS_80228440 00000002 $Formation_0B $Stage_8022792C 00000000
+	$SJIS_80228428 00000003 $Formation_0C $Stage_8022792C 00000000
+	$SJIS_80228400 00000003 $Formation_0D $Stage_8022792C 00000000
+	$SJIS_802283D8 00000004 $Formation_0E $Stage_8022792C 00000000
+	$SJIS_802283C4 00000001 $Formation_0F $Stage_80227C38 00000000
+	$SJIS_802283B8 00000001 $Formation_10 $Stage_8022792C 00000000
+    $SJIS_802283C4 00000001 $Formation_11 $Stage_Sectonia 00000000
+    00000000 00000000 00000000 00000000 00000000
+}
+
+@ $StageTable
+{
+	$ASCII_802285BC $Stage_8022792C
+	$ASCII_802285B4 $Stage_80227A64
+	$ASCII_802285AC $Stage_80227ACC
+	$ASCII_802285A4 $Stage_80227B54
+	$ASCII_8022859C $Stage_80227BD4
+	$ASCII_80228594 $Stage_80227C38
+    $CustomStageMapName $Stage_Sectonia
+	00000000 00000000
+}

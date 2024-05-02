@@ -1,0 +1,39 @@
+%npc tattle
+#message:1A:122
+{
+	[Style Tattle]
+	[EnableCDownNext]This person doesn't seem very[BR]
+	friendly.[Pause 5].[Pause 5].[Pause 10] Here goes nothing, [BR]
+	I guess.[BR]
+	[Wait][End]
+}
+
+%battle tattle
+#message:1C:096
+{
+	[Style Right]
+	This is queen Sectonia. She's an[BR]
+	evil monarch ruling a faraway[BR]
+	land. [BR]
+	[Wait][Next]
+	Hp is 70. She's got a bunch of[BR]
+	nasty tricks and spells up her[BR]
+	sleeves.[Pause 5].[Pause 5].[Pause 5] Although she has no[BR]
+	sleeves. How sly![BR]
+	[Wait][End]
+}
+
+%battle name
+#message:29:083
+{
+	Queen Sectonia[End]
+}
+
+%map tattle
+#message:19:189
+{
+	[Style Tattle]
+	[EnableCDownNext]What an ominous corridor![BR]
+	[Pause 5].[Pause 5].[Pause 5]How did we even get here? [BR]
+	[Wait][End]
+}

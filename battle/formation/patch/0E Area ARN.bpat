@@ -8,7 +8,6 @@
 #define .luigiRun       00EA0000
 #define .luigiRaise     00EA0002
 #define .luigiThrow     00EA0002
-#define .luigiHammer    00EA0002
 #define .sectoniaHurt   00EA000F
 #define .sectoniaDead   00EA000F
 #define .sectoniaBurnHurt  00EA000F
@@ -25,17 +24,21 @@
 #define .sectoniaMagicBall   00EA000B
 #define .sectoniaMagicBallA   00EA000C
 #define .sectoniaMagicBallB   00EA000D
+#define .SectoniaMagicBallBullet1   00EA000E
 
 %Memory Luigi parts
 #define .luigiPart 1
-#define .hammerPart 2
+#define .magicballPart1 2
+#define .magicballPart2 3
+#define .magicballPart3 4
+#define .magicballPart4 5
 
 %Memory Luigi stats
 #define .SectoniaHP 70`b
 #define .hammerThrowDamage 4
 #define .sectoniaSwordDamage 8
 #define .sectoniaLightningDamage 6
-#define .sectoniaMagicBallDamage 2
+#define .sectoniaMagicBallDamage 3
 
 #new:Actor $Sectonia {
     % stats
@@ -46,7 +49,7 @@
     [Flags]       00000200 %flying, isn't hit by quake hammer 
     [StatusTable] $StatusTable_Sectonia
     % ai
-    [PartsCount]    1`s 
+    [PartsCount]    5`s 
     [PartsTable]  $PartsTable_MemoryLuigi0
     [Script]      $Script_Init_MemoryLuigi
     % move effectiveness
@@ -98,7 +101,7 @@
 /% s32 flags %/                 00800000
 /% s8 index %/                  ~Byte:.luigiPart
 /% Vec3b posOffset %/           00b 00b 00b
-/% Vec2b targetOffset %/        00b 30b %for cursor when selecting to attack in battle
+/% Vec2b targetOffset %/        00b 50b %for cursor when selecting to attack in battle
 /% s16 opacity %/               00FFs
 /% s32* IdleAnimations %/       $IdleAnimations_MemoryLuigi
 /% s32* defenseTable %/         $DefenseTable_MemoryLuigi
@@ -109,10 +112,74 @@
 /% s8 unk_1E %/                 00b
 /% s8 unk_1F %/                 00b
 /% s8 unk_20 %/                 00000000
+
+%magicball1
+/% s32 flags %/                 00120001
+/% s8 index %/                  ~Byte:.magicballPart1
+/% Vec3b posOffset %/           00b 00b 00b
+/% Vec2b targetOffset %/        00b 00b %for cursor when selecting to attack in battle
+/% s16 opacity %/               00FFs
+/% s32* IdleAnimations %/       $IdleAnimations_MagicBall
+/% s32* defenseTable %/         $DefenseTable_MemoryLuigi
+/% s32 eventFlags %/            00000000
+/% s32 elementImmunityFlags %/  00000000
+/% s8 unk_1C %/                 00b
+/% s8 unk_1D %/                 00b
+/% s8 unk_1E %/                 00b
+/% s8 unk_1F %/                 00b
+/% s8 unk_20 %/                 00000000
+
+%magicball2
+/% s32 flags %/                 00120001
+/% s8 index %/                  ~Byte:.magicballPart2
+/% Vec3b posOffset %/           00b 00b 00b
+/% Vec2b targetOffset %/        00b 00b %for cursor when selecting to attack in battle
+/% s16 opacity %/               00FFs
+/% s32* IdleAnimations %/       $IdleAnimations_MagicBall
+/% s32* defenseTable %/         $DefenseTable_MemoryLuigi
+/% s32 eventFlags %/            00000000
+/% s32 elementImmunityFlags %/  00000000
+/% s8 unk_1C %/                 00b
+/% s8 unk_1D %/                 00b
+/% s8 unk_1E %/                 00b
+/% s8 unk_1F %/                 00b
+/% s8 unk_20 %/                 00000000
+
+%magicball3
+/% s32 flags %/                 00120001
+/% s8 index %/                  ~Byte:.magicballPart3
+/% Vec3b posOffset %/           00b 00b 00b
+/% Vec2b targetOffset %/        00b 00b %for cursor when selecting to attack in battle
+/% s16 opacity %/               00FFs
+/% s32* IdleAnimations %/       $IdleAnimations_MagicBall
+/% s32* defenseTable %/         $DefenseTable_MemoryLuigi
+/% s32 eventFlags %/            00000000
+/% s32 elementImmunityFlags %/  00000000
+/% s8 unk_1C %/                 00b
+/% s8 unk_1D %/                 00b
+/% s8 unk_1E %/                 00b
+/% s8 unk_1F %/                 00b
+/% s8 unk_20 %/                 00000000
+
+%magicball4
+/% s32 flags %/                 00120001
+/% s8 index %/                  ~Byte:.magicballPart4
+/% Vec3b posOffset %/           00b 00b 00b
+/% Vec2b targetOffset %/        00b 00b %for cursor when selecting to attack in battle
+/% s16 opacity %/               00FFs
+/% s32* IdleAnimations %/       $IdleAnimations_MagicBall
+/% s32* defenseTable %/         $DefenseTable_MemoryLuigi
+/% s32 eventFlags %/            00000000
+/% s32 elementImmunityFlags %/  00000000
+/% s8 unk_1C %/                 00b
+/% s8 unk_1D %/                 00b
+/% s8 unk_1E %/                 00b
+/% s8 unk_1F %/                 00b
+/% s8 unk_20 %/                 00000000
 }
 
-#new:IdleAnimations $IdleAnimations_Hammer {
-.Status:Normal    .luigiHammer
+#new:IdleAnimations $IdleAnimations_MagicBall {
+.Status:Normal    .SectoniaMagicBallBullet1
 .Status:End
 }
 
@@ -292,10 +359,10 @@
     Wait 15`
     Call GetActorPos ( .Actor:Self *Var0 *Var1 *Var2 )
     Add *Var1 10`
-    Call SetPartPos        ( .Actor:Self .hammerPart  *Var0  *Var1  *Var2 )
-    Call SetPartScale  ( .Actor:Self .hammerPart *Fixed[1.0] *Fixed[1.0] *Fixed[1.0] )
-    Call SetPartJumpGravity    ( .Actor:Self .hammerPart *Fixed[3.0] )
-    Call SetPartFlagBits   ( .Actor:Self .hammerPart 00000001 .False )
+    Call SetPartPos        ( .Actor:Self .magicballPart1  *Var0  *Var1  *Var2 )
+    Call SetPartScale  ( .Actor:Self .magicballPart1 *Fixed[1.0] *Fixed[1.0] *Fixed[1.0] )
+    Call SetPartJumpGravity    ( .Actor:Self .magicballPart1 *Fixed[3.0] )
+    Call SetPartFlagBits   ( .Actor:Self .magicballPart1 00000001 .False )
     Call SetGoalToTarget   ( .Actor:Self )
     Call GetGoalPos        ( .Actor:Self *Var0 *Var1 *Var2 )
 
@@ -304,14 +371,14 @@
         CaseOR  ==  .HitResult:Miss % 6
         CaseOR  ==  .HitResult:Lucky % 5
             Add *Var1 -32` %target mario's feet
-            Call JumpPartTo        ( .Actor:Self .hammerPart *Var0 *Var1 *Var2  15` .True )
-            Call SetPartFlagBits   ( .Actor:Self .hammerPart 00000001 .True )
+            Call JumpPartTo        ( .Actor:Self .magicballPart1 *Var0 *Var1 *Var2  15` .True )
+            Call SetPartFlagBits   ( .Actor:Self .magicballPart1 00000001 .True )
             Wait  2`
         EndCaseGroup
 
         Default
-            Call JumpPartTo        ( .Actor:Self .hammerPart *Var0 *Var1 *Var2  15` .True )
-            Call SetPartFlagBits   ( .Actor:Self .hammerPart 00000001 .True )
+            Call JumpPartTo        ( .Actor:Self .magicballPart1 *Var0 *Var1 *Var2  15` .True )
+            Call SetPartFlagBits   ( .Actor:Self .magicballPart1 00000001 .True )
             Wait  2`
             Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .hammerThrowDamage 00000020 )
     EndSwitch
@@ -323,39 +390,180 @@
 #new:Script $SectoniaMagicBall1 {
 
     %sectonia charges her staff and shoots 3 projectiles in quick succession
-	Call SetTargetActor    ( .Actor:Self .Actor:Player )
-	Call SetGoalToTarget ( .Actor:Self )
-	Call  GetActorPos       ( .Actor:Self *Var0 *Var1 *Var2 )
 	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaMagicBall)
-	Wait 24`
-	%shoot first ball
-	Call  GetGoalPos        ( .Actor:Self *Var3 *Var4 *Var5 )
-	Wait  16`
-	%shoot second ball
-	Wait  16`
-	%shoot third ball
-   
+	Wait 16`
+	Thread %this runs in parallel
+		Exec  $SectoniaMagicBallBullet1
+		Wait  16`
+		Exec  $SectoniaMagicBallBullet2
+		Wait  16`
+		Exec  $SectoniaMagicBallBullet3
+		Wait  4`
+		Call SetAnimation ( .Actor:Self .luigiPart .sectoniaIdle)
+	EndThread
+	Wait  28`
 	Call EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 00000001 00000010 )
     Switch  *Var0 
         CaseOR  ==  .HitResult:Miss % 6
         CaseOR  ==  .HitResult:Lucky % 5
-			Call  PlaySound ( 00002069 )
-			Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 *Var3 *Var4 *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 )
-			Wait  4`
-			Call  SetGoalToTarget   ( .Actor:Self )
+			Set   *VarA  *Var0	
+			%Set   *Var0  00000002			
+			If  *VarA  ==  .HitResult:Lucky % 5
+				Call  EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:TriggerLucky 00000000 00000000 00000000 )				
+			EndIf
+			Call  SetPartFlagBits   ( .Actor:Self .magicballPart1 00000001 .True )
+			Call SetPartPos        ( .Actor:Self .magicballPart1  *Var0  *Var1  *Var2 )
+			Wait  16`
+			Call  SetPartFlagBits   ( .Actor:Self .magicballPart2 00000001 .True )
+			Call SetPartPos        ( .Actor:Self .magicballPart2  *Var0  *Var1  *Var2 )
+			Wait  16`
+			Call  SetPartFlagBits   ( .Actor:Self .magicballPart3 00000001 .True )
+			Call SetPartPos        ( .Actor:Self .magicballPart3  *Var0  *Var1  *Var2 )
 			Return
         EndCaseGroup
 
         Default
-			Call  PlaySound ( 00002069 )
-			Call  PlayEffect        ( ~FX:Lightning *Var0 00000060 *Var2 *Var3 *Var4 *Var5 *Fixed[1.0] 00000012 00000000 00000000 00000000 00000000 )
-			Wait  4`
-			%Call  GetStatusFlags    ( .Actor:Self *Var0 )
-			Call  SetGoalToTarget   ( .Actor:Self )
-            Call  EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 000101FE .sectoniaLightningDamage 00000020 ) %second argument is HitResult that says if the attack misses or so
-    EndSwitch
+			Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .sectoniaMagicBallDamage 00000030 )
+			Wait  16`
+			Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .sectoniaMagicBallDamage 00000030 )
+			Wait  16`
+			Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .sectoniaMagicBallDamage 00000030 )			
+    EndSwitch	
+
+	%return all magicball parts to sectonia, invisible
+	Call  SetPartFlagBits   ( .Actor:Self .magicballPart1 00000001 .True )
+	Call SetPartPos        ( .Actor:Self .magicballPart1  *Var0  *Var1  *Var2 )
+	Call  SetPartFlagBits   ( .Actor:Self .magicballPart2 00000001 .True )
+	Call SetPartPos        ( .Actor:Self .magicballPart2  *Var0  *Var1  *Var2 )
+	Call  SetPartFlagBits   ( .Actor:Self .magicballPart3 00000001 .True )
+	Call SetPartPos        ( .Actor:Self .magicballPart3  *Var0  *Var1  *Var2 )
     Return
     End
+}
+
+%when sectonia is low on health, she fires 4 balls instead
+#new:Script $SectoniaMagicBall2 {
+
+    %sectonia charges her staff and shoots 3 projectiles in quick succession
+	Call SetAnimation ( .Actor:Self .luigiPart .sectoniaMagicBall)
+	Wait 16`
+	Thread %this runs in parallel
+		Exec  $SectoniaMagicBallBullet1
+		Wait  16`
+		Exec  $SectoniaMagicBallBullet2
+		Wait  16`
+		Exec  $SectoniaMagicBallBullet3
+		Wait  16`
+		Exec  $SectoniaMagicBallBullet4
+		Wait  4`
+		Call SetAnimation ( .Actor:Self .luigiPart .sectoniaIdle)
+	EndThread
+	Wait  28`
+	Call EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:0 00000000 00000001 00000010 )
+    Switch  *Var0 
+        CaseOR  ==  .HitResult:Miss % 6
+        CaseOR  ==  .HitResult:Lucky % 5
+			Set   *VarA  *Var0	
+			%Set   *Var0  00000002			
+			If  *VarA  ==  .HitResult:Lucky % 5
+				Call  EnemyTestTarget   ( .Actor:Self *Var0 ~Flags:DamageType:TriggerLucky 00000000 00000000 00000000 )				
+			EndIf
+			Call  SetPartFlagBits   ( .Actor:Self .magicballPart1 00000001 .True )
+			Call SetPartPos        ( .Actor:Self .magicballPart1  *Var0  *Var1  *Var2 )
+			Wait  16`
+			Call  SetPartFlagBits   ( .Actor:Self .magicballPart2 00000001 .True )
+			Call SetPartPos        ( .Actor:Self .magicballPart2  *Var0  *Var1  *Var2 )
+			Wait  16`
+			Call  SetPartFlagBits   ( .Actor:Self .magicballPart3 00000001 .True )
+			Call SetPartPos        ( .Actor:Self .magicballPart3  *Var0  *Var1  *Var2 )
+			Wait  16`
+			Call  SetPartFlagBits   ( .Actor:Self .magicballPart4 00000001 .True )
+			Call SetPartPos        ( .Actor:Self .magicballPart4  *Var0  *Var1  *Var2 )
+			Return
+        EndCaseGroup
+
+        Default
+			Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .sectoniaMagicBallDamage 00000030 )
+			Wait  16`
+			Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .sectoniaMagicBallDamage 00000030 )
+			Wait  16`
+			Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .sectoniaMagicBallDamage 00000030 )
+			Wait  16`
+			Call EnemyDamageTarget ( .Actor:Self *Var0 ~Flags:DamageType:NoContact 00000000 00000000 .sectoniaMagicBallDamage 00000030 )			
+    EndSwitch	
+
+	%return all magicball parts to sectonia, invisible
+	Call  SetPartFlagBits   ( .Actor:Self .magicballPart1 00000001 .True )
+	Call SetPartPos        ( .Actor:Self .magicballPart1  *Var0  *Var1  *Var2 )
+	Call  SetPartFlagBits   ( .Actor:Self .magicballPart2 00000001 .True )
+	Call SetPartPos        ( .Actor:Self .magicballPart2  *Var0  *Var1  *Var2 )
+	Call  SetPartFlagBits   ( .Actor:Self .magicballPart3 00000001 .True )
+	Call SetPartPos        ( .Actor:Self .magicballPart3  *Var0  *Var1  *Var2 )
+	Call  SetPartFlagBits   ( .Actor:Self .magicballPart4 00000001 .True )
+	Call SetPartPos        ( .Actor:Self .magicballPart4  *Var0  *Var1  *Var2 )
+    Return
+    End
+}
+
+%used to make magicballs move
+#new:Script $SectoniaMagicBallBullet1 {
+	Call SetTargetActor    ( .Actor:Self .Actor:Player )
+	Call SetGoalToTarget ( .Actor:Self )
+	Call  GetActorPos       ( .Actor:Self *Var0 *Var1 *Var2 )
+	Add   *Var1  56` %use this to do operations on variables
+	Call SetPartPos        ( .Actor:Self .magicballPart1  *Var0  *Var1  2` )	
+	Call SetPartFlagBits   ( .Actor:Self .magicballPart1 00000001 .False )
+	Call GetGoalPos        ( .Actor:Self *Var3 *Var4 *Var5 )
+	Call SetPartMoveSpeed (.Actor:Self .magicballPart1 *Fixed[5.0] ) %(ACTOR_SELF, part, Float(6.5))
+	Add   *Var4  -12`
+	Call FlyPartTo (.Actor:Self .magicballPart1 *Var3 *Var4 *Var5 00000000 00000000 .Easing:Linear)
+	Return
+	End
+}
+
+#new:Script $SectoniaMagicBallBullet2 {
+	Call SetTargetActor    ( .Actor:Self .Actor:Player )
+	Call SetGoalToTarget ( .Actor:Self )
+	Call  GetActorPos       ( .Actor:Self *Var0 *Var1 *Var2 )
+	Add   *Var1  56` %use this to do operations on variables
+	Call SetPartPos        ( .Actor:Self .magicballPart2  *Var0  *Var1  2` )	
+	Call SetPartFlagBits   ( .Actor:Self .magicballPart2 00000001 .False )
+	Call GetGoalPos        ( .Actor:Self *Var3 *Var4 *Var5 )
+	Call SetPartMoveSpeed (.Actor:Self .magicballPart2 *Fixed[5.0] ) %(ACTOR_SELF, part, Float(6.5))
+	Add   *Var4  -12`
+	Call FlyPartTo (.Actor:Self .magicballPart2 *Var3 *Var4 *Var5 00000000 00000000 .Easing:Linear)
+	Return
+	End
+}
+
+#new:Script $SectoniaMagicBallBullet3 {
+	Call SetTargetActor    ( .Actor:Self .Actor:Player )
+	Call SetGoalToTarget ( .Actor:Self )
+	Call  GetActorPos       ( .Actor:Self *Var0 *Var1 *Var2 )
+	Add   *Var1  56` %use this to do operations on variables
+	Call SetPartPos        ( .Actor:Self .magicballPart3  *Var0  *Var1  2` )	
+	Call SetPartFlagBits   ( .Actor:Self .magicballPart3 00000001 .False )
+	Call GetGoalPos        ( .Actor:Self *Var3 *Var4 *Var5 )
+	Call SetPartMoveSpeed (.Actor:Self .magicballPart3 *Fixed[5.0] ) %(ACTOR_SELF, part, Float(6.5))
+	Add   *Var4  -12`
+	Call FlyPartTo (.Actor:Self .magicballPart3 *Var3 *Var4 *Var5 00000000 00000000 .Easing:Linear)
+	Return
+	End
+}
+
+#new:Script $SectoniaMagicBallBullet4 {
+	Call SetTargetActor    ( .Actor:Self .Actor:Player )
+	Call SetGoalToTarget ( .Actor:Self )
+	Call  GetActorPos       ( .Actor:Self *Var0 *Var1 *Var2 )
+	Add   *Var1  56` %use this to do operations on variables
+	Call SetPartPos        ( .Actor:Self .magicballPart4  *Var0  *Var1  2` )	
+	Call SetPartFlagBits   ( .Actor:Self .magicballPart4 00000001 .False )
+	Call GetGoalPos        ( .Actor:Self *Var3 *Var4 *Var5 )
+	Call SetPartMoveSpeed (.Actor:Self .magicballPart4 *Fixed[5.0] ) %(ACTOR_SELF, part, Float(6.5))
+	Add   *Var4  -12`
+	Call FlyPartTo (.Actor:Self .magicballPart4 *Var3 *Var4 *Var5 00000000 00000000 .Easing:Linear)
+	Return
+	End
 }
 
 #new:Script $LuigiRunAttackFall {
@@ -642,38 +850,42 @@
     End
 }
 
-
 #new:Script $Script_TakeTurn_MemoryLuigi {
     Call UseIdleAnimation  ( .Actor:Self .False )
     Call EnableIdleScript  ( .Actor:Self .False )
-    Call RandInt ( 50` *Var0 )
+    Call RandInt ( 2` *Var0 )
 	Call RandInt ( 50` *Var3 )
 	Call  GetActorHP    ( .Actor:Self *Var1 )
-    If *Var0 < 26`
-		If *Var1 < 40`
-			If *Var3 < 26`
-				ExecWait $SectoniaSwordAttack1
+	Switch  *Var0
+		Case  ==  00000000
+			If *Var1 > 20`
+				ExecWait $SectoniaMagicBall1
 			Else
-				ExecWait $SectoniaSwordAttack2
-			EndIf
-		Else
-			ExecWait $SectoniaSwordAttack1
-		EndIf    
-    Else
-		If *Var1 > 30`
-			ExecWait $SectoniaLightningAttack1
-		Else
-			ExecWait $SectoniaLightningAttack2
-		EndIf        
-    EndIf
+				ExecWait $SectoniaMagicBall2
+			EndIf	
+		Case  ==  00000001
+			If *Var1 < 40`
+				If *Var3 < 26`
+					ExecWait $SectoniaSwordAttack1
+				Else
+					ExecWait $SectoniaSwordAttack2
+				EndIf
+			Else
+				ExecWait $SectoniaSwordAttack1
+			EndIf 		
+		Case  ==  00000002
+			If *Var1 > 30`
+				ExecWait $SectoniaLightningAttack1
+			Else
+				ExecWait $SectoniaLightningAttack2
+			EndIf        
+    EndSwitch
     
     Call EnableIdleScript  ( .Actor:Self .True )
     Call UseIdleAnimation  ( .Actor:Self .True )
     Return
     End
 }
-
-
 
 #new:ASCII $CustomStageTex {"sec_tex"}
 #new:ASCII $CustomStageShape {"sec_bt01_shape"}

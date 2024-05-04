@@ -3,7 +3,7 @@
 {
 	[Style Tattle]
 	[EnableCDownNext]This person doesn't seem very[BR]
-	friendly.[Pause 5].[Pause 5].[Pause 10] Here goes nothing, [BR]
+	friendly...[Pause 10] Here goes nothing, [BR]
 	I guess.[BR]
 	[Wait][End]
 }
@@ -16,10 +16,14 @@
 	evil monarch ruling a faraway[BR]
 	land. [BR]
 	[Wait][Next]
-	Hp is 70. She's got a bunch of[BR]
+	Hp is 70, Attack is 8, and [BR]
+	Defense is 0. She will be more [BR]
+	devious as the battle goes on. [BR]
+	[Wait][Next]
+	She's got a bunch of[BR]
 	nasty tricks and spells up her[BR]
-	sleeves.[Pause 5].[Pause 5].[Pause 5] Although she has no[BR]
-	sleeves. How sly![BR]
+	sleeves...[Pause 10] Although she has no[BR]
+	sleeves.[Pause 5] How sly![BR]
 	[Wait][End]
 }
 
